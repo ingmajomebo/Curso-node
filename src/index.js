@@ -1,24 +1,31 @@
+// index.js
 // Muestra el número total de lineas, y el número de palabras por linea
-// Documentación: https://nodejs.org/api/readline.html
-import fs from 'fs'
 import readline from 'readline'
+import async from './async'
+import events from './events'
 
 const file = process.argv[2];
-let lines = 0;
 
-console.log(`Fichero selecionado: ${file}\n`);
-
-// Emite el evento 'line' cuando lee una linea
 const rl = readline.createInterface({
-    input: fs.createReadStream(file),
-    crlfDelay: Infinity
-});
+    input: process.stdin,
+    output: process.stdout
+})
 
-rl.on('line', (line) => {
-    ++lines;
-    console.log(`Número de caracteres por linea: ${line.length}`)
-});
+rl.question(
+    `Como quiere leer el fichero?
+  1. De forma asíncrona (default)
+  2. Con eventos
+  Seleccione una opcion: `,
+    value => {
+        console.log(`Selecciono ${value}\n\n`);
 
-rl.on('close', () => {
-    console.log(`\nNúmero total de lineas: ${lines}`)
-});
+        switch (value) {
+            case '2':
+                events(file);
+                break;
+            default:
+                async(file);
+                break;
+        }
+        rl.close();
+    });
